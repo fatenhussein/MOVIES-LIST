@@ -62,3 +62,12 @@ export const loginUser = async (req, res) => {
     .status(200)
     .json({ message: "Login successful", data: userWithoutPassword, token });
 };
+
+export const logoutUser = async (req, res) => {
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+  });
+  res.status(200).json({ message: "Logout successful" });
+};
