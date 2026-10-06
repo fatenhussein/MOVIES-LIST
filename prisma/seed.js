@@ -1,7 +1,7 @@
 import { prisma } from "../src/config/db.js";
 
 // Replace with the id of an existing user in your database
-const creatorId = "f940e8a6-3515-4e71-8060-1798b01a5f90";
+const creatorId = "c8ffecb1-d02d-4acd-b7f5-f18f1423b1dc";
 
 const movies = [
   {

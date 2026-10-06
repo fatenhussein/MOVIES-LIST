@@ -5,6 +5,8 @@ import { connectDB, disconnectDB } from "./config/db.js";
 // import routes
 import movieRoutes from "./routes/movieRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import watchlistRoutes from "./routes/watchlistRoute.js";
+
 config();
 connectDB();
 const app = express();
@@ -13,6 +15,7 @@ const port = process.env.PORT || 3001;
 app.use(express.json());
 app.use("/movies", movieRoutes);
 app.use("/auth", authRoutes);
+app.use("/watchlist", watchlistRoutes);
 const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
