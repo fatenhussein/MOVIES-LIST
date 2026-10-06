@@ -12,7 +12,7 @@ const prisma = new PrismaClient({
       : ["warn", "error"],
 });
 
-const connectDB = async () => {
+const connectDB = async (): Promise<void> => {
   try {
     await prisma.$connect();
     console.log("Connected to the database");
@@ -22,7 +22,7 @@ const connectDB = async () => {
   }
 };
 
-const disconnectDB = async () => {
+const disconnectDB = async (): Promise<void> => {
   try {
     await prisma.$disconnect();
     console.log("Disconnected from the database");
@@ -30,6 +30,5 @@ const disconnectDB = async () => {
     console.error("Error disconnecting from the database:", error);
   }
 };
-
 
 export { connectDB, disconnectDB, prisma };

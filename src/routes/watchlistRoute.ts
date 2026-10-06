@@ -4,14 +4,14 @@ import {
   getWatchlist,
   updateWatchlistItem,
   removeFromWatchlist,
-} from "../controllers/watchlistController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
+} from "../controllers/watchlistController.ts";
+import authMiddleware from "../middleware/authMiddleware.ts";
 import {
   addToWatchlistSchema,
   updateWatchlistItemSchema,
-} from "../validators/watchlistValidators.js";
-import { idParamSchema } from "../validators/commonValidators.js";
-import { validateRequest } from "../middleware/validateRequest.js";
+} from "../validators/watchlistValidators.ts";
+import { idParamSchema } from "../validators/commonValidators.ts";
+import { validateRequest } from "../middleware/validateRequest.ts";
 
 const router = express.Router();
 

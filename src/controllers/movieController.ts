@@ -1,6 +1,13 @@
-import { prisma } from "../config/db.js";
+import type { Request, Response } from "express";
 
-export const getMovies = async (req, res) => {
+import { prisma } from "../config/db.ts";
+import type { IdParams } from "../validators/commonValidators.ts";
+import type {
+  CreateMovieInput,
+  UpdateMovieInput,
+} from "../validators/movieValidators.ts";
+
+export const getMovies = async (_req: Request, res: Response) => {
   const movies = await prisma.movie.findMany({
     orderBy: { createdAt: "desc" },
   });
@@ -8,7 +15,7 @@ export const getMovies = async (req, res) => {
   res.status(200).json({ data: movies });
 };
 
-export const getMovieById = async (req, res) => {
+export const getMovieById = async (req: Request<IdParams>, res: Response) => {
   const movie = await prisma.movie.findUnique({
     where: { id: req.params.id },
   });
@@ -20,7 +27,10 @@ export const getMovieById = async (req, res) => {
   res.status(200).json({ data: movie });
 };
 
-export const createMovie = async (req, res) => {
+export const createMovie = async (
+  req: Request<object, object, CreateMovieInput>,
+  res: Response,
+) => {
   const { title, overview, releaseYear, genres, runtime, posterUrl } = req.body;
 
   const movie = await prisma.movie.create({
@@ -31,14 +41,17 @@ export const createMovie = async (req, res) => {
       genres,
       runtime,
       posterUrl,
-      createdBy: req.user.id,
+      createdBy: req.user!.id,
     },
   });
 
   res.status(201).json({ message: "Movie created", data: movie });
 };
 
-export const updateMovie = async (req, res) => {
+export const updateMovie = async (
+  req: Request<IdParams, object, UpdateMovieInput>,
+  res: Response,
+) => {
   const movie = await prisma.movie.findUnique({
     where: { id: req.params.id },
   });
@@ -47,7 +60,7 @@ export const updateMovie = async (req, res) => {
     return res.status(404).json({ message: "Movie not found" });
   }
 
-  if (movie.createdBy !== req.user.id) {
+  if (movie.createdBy !== req.user!.id) {
     return res
       .status(403)
       .json({ message: "You can only update movies you created" });
@@ -63,7 +76,7 @@ export const updateMovie = async (req, res) => {
   res.status(200).json({ message: "Movie updated", data: updatedMovie });
 };
 
-export const deleteMovie = async (req, res) => {
+export const deleteMovie = async (req: Request<IdParams>, res: Response) => {
   const movie = await prisma.movie.findUnique({
     where: { id: req.params.id },
   });
@@ -72,7 +85,7 @@ export const deleteMovie = async (req, res) => {
     return res.status(404).json({ message: "Movie not found" });
   }
 
-  if (movie.createdBy !== req.user.id) {
+  if (movie.createdBy !== req.user!.id) {
     return res
       .status(403)
       .json({ message: "You can only delete movies you created" });

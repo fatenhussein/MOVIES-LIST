@@ -1,8 +1,18 @@
-import { prisma } from "../config/db.js";
+import type { Request, Response } from "express";
 
-export const addToWatchlist = async (req, res) => {
+import { prisma } from "../config/db.ts";
+import type { IdParams } from "../validators/commonValidators.ts";
+import type {
+  AddToWatchlistInput,
+  UpdateWatchlistItemInput,
+} from "../validators/watchlistValidators.ts";
+
+export const addToWatchlist = async (
+  req: Request<object, object, AddToWatchlistInput>,
+  res: Response,
+) => {
   const { movieId, status, rating, notes } = req.body;
-  const userId = req.user.id;
+  const userId = req.user!.id;
 
   const movieExists = await prisma.movie.findUnique({
     where: {
@@ -43,9 +53,9 @@ export const addToWatchlist = async (req, res) => {
     .json({ message: "Movie added to watchlist", data: newWatchlistEntry });
 };
 
-export const getWatchlist = async (req, res) => {
+export const getWatchlist = async (req: Request, res: Response) => {
   const watchlist = await prisma.watchlistItem.findMany({
-    where: { userId: req.user.id },
+    where: { userId: req.user!.id },
     include: { movie: true },
     orderBy: { createdAt: "desc" },
   });
@@ -53,7 +63,10 @@ export const getWatchlist = async (req, res) => {
   res.status(200).json({ data: watchlist });
 };
 
-export const updateWatchlistItem = async (req, res) => {
+export const updateWatchlistItem = async (
+  req: Request<IdParams, object, UpdateWatchlistItemInput>,
+  res: Response,
+) => {
   const watchlistItem = await prisma.watchlistItem.findUnique({
     where: { id: req.params.id },
   });
@@ -62,7 +75,7 @@ export const updateWatchlistItem = async (req, res) => {
     return res.status(404).json({ message: "Watchlist item not found" });
   }
 
-  if (watchlistItem.userId !== req.user.id) {
+  if (watchlistItem.userId !== req.user!.id) {
     return res
       .status(403)
       .json({ message: "You can only update your own watchlist items" });
@@ -75,10 +88,15 @@ export const updateWatchlistItem = async (req, res) => {
     data: { status, rating, notes },
   });
 
-  res.status(200).json({ message: "Watchlist item updated", data: updatedItem });
+  res
+    .status(200)
+    .json({ message: "Watchlist item updated", data: updatedItem });
 };
 
-export const removeFromWatchlist = async (req, res) => {
+export const removeFromWatchlist = async (
+  req: Request<IdParams>,
+  res: Response,
+) => {
   const watchlistItem = await prisma.watchlistItem.findUnique({
     where: { id: req.params.id },
   });
@@ -87,7 +105,7 @@ export const removeFromWatchlist = async (req, res) => {
     return res.status(404).json({ message: "Watchlist item not found" });
   }
 
-  if (watchlistItem.userId !== req.user.id) {
+  if (watchlistItem.userId !== req.user!.id) {
     return res
       .status(403)
       .json({ message: "You can only remove your own watchlist items" });
