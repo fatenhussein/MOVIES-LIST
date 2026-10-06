@@ -3,9 +3,9 @@ import {
   loginUser,
   registerUser,
   logoutUser,
-} from "../controllers/authController.js";
-import { validateRequest } from "../middleware/validateRequest.js";
-import { registerSchema, loginSchema } from "../validators/authValidators.js";
+} from "../controllers/authController.ts";
+import { validateRequest } from "../middleware/validateRequest.ts";
+import { registerSchema, loginSchema } from "../validators/authValidators.ts";
 
 const router = express.Router();
 

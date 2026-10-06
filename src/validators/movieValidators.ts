@@ -29,3 +29,6 @@ export const updateMovieSchema = z
   .refine((data) => Object.keys(data).length > 0, {
     message: "Provide at least one field to update",
   });
+
+export type CreateMovieInput = z.infer<typeof createMovieSchema>;
+export type UpdateMovieInput = z.infer<typeof updateMovieSchema>;

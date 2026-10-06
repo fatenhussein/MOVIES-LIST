@@ -1,9 +1,18 @@
 import jwt from "jsonwebtoken";
+import type { NextFunction, Request, Response } from "express";
 
-import { prisma } from "../config/db.js";
+import { prisma } from "../config/db.ts";
 
-export const authMiddleware = async (req, res, next) => {
-  let token;
+interface TokenPayload extends jwt.JwtPayload {
+  id: string;
+}
+
+export const authMiddleware = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  let token: string | undefined;
 
   if (req.headers.authorization?.startsWith("Bearer ")) {
     token = req.headers.authorization.split(" ")[1];
@@ -18,7 +27,7 @@ export const authMiddleware = async (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as TokenPayload;
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
@@ -31,10 +40,11 @@ export const authMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (error) {
-    console.error("Auth error:", error.name, error.message);
+    const { name, message } = error as Error;
+    console.error("Auth error:", name, message);
     return res
       .status(401)
-      .json({ message: "Invalid or expired token.", error: error.message });
+      .json({ message: "Invalid or expired token.", error: message });
   }
 };
 

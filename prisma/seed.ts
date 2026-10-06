@@ -1,4 +1,4 @@
-import { prisma } from "../src/config/db.js";
+import { prisma } from "../src/config/db.ts";
 
 // Replace with the id of an existing user in your database
 const creatorId = "c8ffecb1-d02d-4acd-b7f5-f18f1423b1dc";

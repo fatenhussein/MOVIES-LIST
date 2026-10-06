@@ -5,14 +5,14 @@ import {
   createMovie,
   updateMovie,
   deleteMovie,
-} from "../controllers/movieController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
-import { validateRequest } from "../middleware/validateRequest.js";
+} from "../controllers/movieController.ts";
+import authMiddleware from "../middleware/authMiddleware.ts";
+import { validateRequest } from "../middleware/validateRequest.ts";
 import {
   createMovieSchema,
   updateMovieSchema,
-} from "../validators/movieValidators.js";
-import { idParamSchema } from "../validators/commonValidators.js";
+} from "../validators/movieValidators.ts";
+import { idParamSchema } from "../validators/commonValidators.ts";
 
 const router = express.Router();
 

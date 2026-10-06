@@ -1,8 +1,14 @@
-import { prisma } from "../config/db.js";
+import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
-import { generateToken } from "../utils/generateToken.js";
 
-export const registerUser = async (req, res) => {
+import { prisma } from "../config/db.ts";
+import { generateToken } from "../utils/generateToken.ts";
+import type { LoginInput, RegisterInput } from "../validators/authValidators.ts";
+
+export const registerUser = async (
+  req: Request<object, object, RegisterInput>,
+  res: Response,
+) => {
   const { email, password, name } = req.body;
 
   const userExists = await prisma.user.findUnique({
@@ -36,7 +42,10 @@ export const registerUser = async (req, res) => {
     .json({ message: "User registered successfully", data: user, token });
 };
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (
+  req: Request<object, object, LoginInput>,
+  res: Response,
+) => {
   const { email, password } = req.body;
 
   const user = await prisma.user.findUnique({
@@ -65,7 +74,7 @@ export const loginUser = async (req, res) => {
     .json({ message: "Login successful", data: userWithoutPassword, token });
 };
 
-export const logoutUser = async (req, res) => {
+export const logoutUser = async (_req: Request, res: Response) => {
   res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",

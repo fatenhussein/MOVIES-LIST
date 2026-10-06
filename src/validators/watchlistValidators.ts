@@ -30,3 +30,8 @@ export const updateWatchlistItemSchema = z
   .refine((data) => Object.keys(data).length > 0, {
     message: "Provide at least one of status, rating or notes",
   });
+
+export type AddToWatchlistInput = z.infer<typeof addToWatchlistSchema>;
+export type UpdateWatchlistItemInput = z.infer<
+  typeof updateWatchlistItemSchema
+>;

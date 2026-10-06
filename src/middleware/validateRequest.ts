@@ -1,8 +1,11 @@
+import type { NextFunction, Request, Response } from "express";
+import type { ZodType } from "zod";
+
 // Validates req.body or req.params against a zod schema.
 // On failure responds 400 with a list of field errors.
 export const validateRequest =
-  (schema, source = "body") =>
-  (req, res, next) => {
+  (schema: ZodType, source: "body" | "params" = "body") =>
+  (req: Request, res: Response, next: NextFunction) => {
     const result = schema.safeParse(req[source] ?? {});
 
     if (!result.success) {

@@ -20,3 +20,6 @@ export const loginSchema = z.object({
     .string({ error: "password is required" })
     .min(1, "password is required"),
 });
+
+export type RegisterInput = z.infer<typeof registerSchema>;
+export type LoginInput = z.infer<typeof loginSchema>;
