@@ -12,7 +12,10 @@ const movieFields = {
   releaseYear: z
     .int("releaseYear must be a whole number")
     .min(1888, "releaseYear must be 1888 or later")
-    .max(currentYear + 10, `releaseYear must be ${currentYear + 10} or earlier`),
+    .max(
+      currentYear + 10,
+      `releaseYear must be ${currentYear + 10} or earlier`,
+    ),
   genres: z.array(z.string().trim().min(1)).optional(),
   runtime: z.int("runtime must be a whole number").positive().optional(),
   posterUrl: z.url("posterUrl must be a valid URL").optional(),

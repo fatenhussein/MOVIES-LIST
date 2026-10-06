@@ -21,7 +21,12 @@ const validateId = validateRequest(idParamSchema, "params");
 router.get("/", getMovies);
 router.get("/:id", validateId, getMovieById);
 
-router.post("/", authMiddleware, validateRequest(createMovieSchema), createMovie);
+router.post(
+  "/",
+  authMiddleware,
+  validateRequest(createMovieSchema),
+  createMovie,
+);
 router.put(
   "/:id",
   authMiddleware,

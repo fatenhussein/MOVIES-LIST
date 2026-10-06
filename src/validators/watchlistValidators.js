@@ -1,8 +1,11 @@
 import { z } from "zod";
 
-const watchlistStatus = z.enum(["PLANNED", "WATCHING", "COMPLETED", "DROPPED"], {
-  error: "status must be one of PLANNED, WATCHING, COMPLETED, DROPPED",
-});
+const watchlistStatus = z.enum(
+  ["PLANNED", "WATCHING", "COMPLETED", "DROPPED"],
+  {
+    error: "status must be one of PLANNED, WATCHING, COMPLETED, DROPPED",
+  },
+);
 
 const rating = z
   .int("rating must be a whole number")

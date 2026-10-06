@@ -75,7 +75,9 @@ export const updateWatchlistItem = async (req, res) => {
     data: { status, rating, notes },
   });
 
-  res.status(200).json({ message: "Watchlist item updated", data: updatedItem });
+  res
+    .status(200)
+    .json({ message: "Watchlist item updated", data: updatedItem });
 };
 
 export const removeFromWatchlist = async (req, res) => {
