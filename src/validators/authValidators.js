@@ -1,12 +1,22 @@
 import { z } from "zod";
 
+const email = z
+  .string({ error: "email is required" })
+  .trim()
+  .toLowerCase()
+  .pipe(z.email("email must be a valid email address"));
+
 export const registerSchema = z.object({
-  email: z.email("email must be a valid email address").trim().toLowerCase(),
-  password: z.string().min(6, "password must be at least 6 characters"),
+  email,
+  password: z
+    .string({ error: "password is required" })
+    .min(6, "password must be at least 6 characters"),
   name: z.string().trim().min(1).max(100).optional(),
 });
 
 export const loginSchema = z.object({
-  email: z.email("email must be a valid email address").trim().toLowerCase(),
-  password: z.string().min(1, "password is required"),
+  email,
+  password: z
+    .string({ error: "password is required" })
+    .min(1, "password is required"),
 });

@@ -1,12 +1,8 @@
 import { prisma } from "../config/db.js";
 
 export const addToWatchlist = async (req, res) => {
-  const { movieId, status, rating, notes } = req.body ?? {};
+  const { movieId, status, rating, notes } = req.body;
   const userId = req.user.id;
-
-  if (!movieId) {
-    return res.status(400).json({ message: "movieId is required" });
-  }
 
   const movieExists = await prisma.movie.findUnique({
     where: {

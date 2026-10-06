@@ -7,14 +7,28 @@ import {
   deleteMovie,
 } from "../controllers/movieController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { validateRequest } from "../middleware/validateRequest.js";
+import {
+  createMovieSchema,
+  updateMovieSchema,
+} from "../validators/movieValidators.js";
+import { idParamSchema } from "../validators/commonValidators.js";
 
 const router = express.Router();
 
-router.get("/", getMovies);
-router.get("/:id", getMovieById);
+const validateId = validateRequest(idParamSchema, "params");
 
-router.post("/", authMiddleware, createMovie);
-router.put("/:id", authMiddleware, updateMovie);
-router.delete("/:id", authMiddleware, deleteMovie);
+router.get("/", getMovies);
+router.get("/:id", validateId, getMovieById);
+
+router.post("/", authMiddleware, validateRequest(createMovieSchema), createMovie);
+router.put(
+  "/:id",
+  authMiddleware,
+  validateId,
+  validateRequest(updateMovieSchema),
+  updateMovie,
+);
+router.delete("/:id", authMiddleware, validateId, deleteMovie);
 
 export default router;

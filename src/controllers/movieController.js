@@ -23,12 +23,6 @@ export const getMovieById = async (req, res) => {
 export const createMovie = async (req, res) => {
   const { title, overview, releaseYear, genres, runtime, posterUrl } = req.body;
 
-  if (!title || !releaseYear) {
-    return res
-      .status(400)
-      .json({ message: "title and releaseYear are required" });
-  }
-
   const movie = await prisma.movie.create({
     data: {
       title,

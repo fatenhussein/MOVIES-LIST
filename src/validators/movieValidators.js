@@ -3,7 +3,11 @@ import { z } from "zod";
 const currentYear = new Date().getFullYear();
 
 const movieFields = {
-  title: z.string().trim().min(1, "title is required").max(200),
+  title: z
+    .string({ error: "title is required" })
+    .trim()
+    .min(1, "title is required")
+    .max(200),
   overview: z.string().trim().max(2000).optional(),
   releaseYear: z
     .int("releaseYear must be a whole number")

@@ -17,7 +17,6 @@ export const registerUser = async (req, res) => {
   //hash the password before saving it to the database
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
-  const token = generateToken(user.id, res);
 
   const newUser = await prisma.user.create({
     data: {
@@ -25,13 +24,16 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
       name: name,
     },
-    token,
   });
+
+  const token = generateToken(newUser.id, res);
 
   // never send the password hash back to the client
   const { password: _, ...user } = newUser;
 
-  res.status(201).json({ message: "User registered successfully", data: user });
+  res
+    .status(201)
+    .json({ message: "User registered successfully", data: user, token });
 };
 
 export const loginUser = async (req, res) => {
@@ -64,7 +66,7 @@ export const loginUser = async (req, res) => {
 };
 
 export const logoutUser = async (req, res) => {
-  res.clearCookie("jwt", {
+  res.clearCookie("token", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
