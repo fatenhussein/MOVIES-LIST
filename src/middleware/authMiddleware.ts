@@ -42,9 +42,7 @@ export const authMiddleware = async (
   } catch (error) {
     const { name, message } = error as Error;
     console.error("Auth error:", name, message);
-    return res
-      .status(401)
-      .json({ message: "Invalid or expired token.", error: message });
+    return res.status(401).json({ message: "Invalid or expired token." });
   }
 };
 

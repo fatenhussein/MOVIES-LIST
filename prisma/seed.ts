@@ -1,7 +1,14 @@
+import bcrypt from "bcryptjs";
+
 import { prisma } from "../src/config/db.ts";
 
-// Replace with the id of an existing user in your database
-const creatorId = "c8ffecb1-d02d-4acd-b7f5-f18f1423b1dc";
+// Movies are created by this demo user, so you can log in as it and
+// try the update/delete endpoints right away
+const demoUser = {
+  email: "demo@example.com",
+  password: "password123",
+  name: "Demo User",
+};
 
 const movies = [
   {
@@ -11,7 +18,6 @@ const movies = [
     genres: ["Action", "Sci-Fi"],
     runtime: 136,
     posterUrl: "https://example.com/matrix.jpg",
-    createdBy: creatorId,
   },
   {
     title: "Inception",
@@ -21,7 +27,6 @@ const movies = [
     genres: ["Action", "Sci-Fi", "Thriller"],
     runtime: 148,
     posterUrl: "https://example.com/inception.jpg",
-    createdBy: creatorId,
   },
   {
     title: "The Dark Knight",
@@ -30,7 +35,6 @@ const movies = [
     genres: ["Action", "Crime", "Drama"],
     runtime: 152,
     posterUrl: "https://example.com/dark-knight.jpg",
-    createdBy: creatorId,
   },
   {
     title: "Interstellar",
@@ -40,7 +44,6 @@ const movies = [
     genres: ["Adventure", "Drama", "Sci-Fi"],
     runtime: 169,
     posterUrl: "https://example.com/interstellar.jpg",
-    createdBy: creatorId,
   },
   {
     title: "Pulp Fiction",
@@ -49,7 +52,6 @@ const movies = [
     genres: ["Crime", "Drama"],
     runtime: 154,
     posterUrl: "https://example.com/pulp-fiction.jpg",
-    createdBy: creatorId,
   },
   {
     title: "The Shawshank Redemption",
@@ -58,7 +60,6 @@ const movies = [
     genres: ["Drama"],
     runtime: 142,
     posterUrl: "https://example.com/shawshank.jpg",
-    createdBy: creatorId,
   },
   {
     title: "Spirited Away",
@@ -68,7 +69,6 @@ const movies = [
     genres: ["Animation", "Adventure", "Fantasy"],
     runtime: 125,
     posterUrl: "https://example.com/spirited-away.jpg",
-    createdBy: creatorId,
   },
   {
     title: "Parasite",
@@ -77,15 +77,25 @@ const movies = [
     genres: ["Comedy", "Drama", "Thriller"],
     runtime: 132,
     posterUrl: "https://example.com/parasite.jpg",
-    createdBy: creatorId,
   },
 ];
 
 const main = async () => {
+  const creator = await prisma.user.upsert({
+    where: { email: demoUser.email },
+    update: {},
+    create: {
+      email: demoUser.email,
+      name: demoUser.name,
+      password: await bcrypt.hash(demoUser.password, 10),
+    },
+  });
+  console.log(`Demo user: ${demoUser.email} / ${demoUser.password}`);
+
   console.log("Seeding movies...");
 
   for (const movie of movies) {
-    await prisma.movie.create({ data: movie });
+    await prisma.movie.create({ data: { ...movie, createdBy: creator.id } });
     console.log(`Created movie: ${movie.title}`);
   }
 

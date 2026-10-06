@@ -3,7 +3,10 @@ import bcrypt from "bcryptjs";
 
 import { prisma } from "../config/db.ts";
 import { generateToken } from "../utils/generateToken.ts";
-import type { LoginInput, RegisterInput } from "../validators/authValidators.ts";
+import type {
+  LoginInput,
+  RegisterInput,
+} from "../validators/authValidators.ts";
 
 export const registerUser = async (
   req: Request<object, object, RegisterInput>,
