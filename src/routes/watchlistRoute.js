@@ -1,14 +1,19 @@
 import express from "express";
-import { addToWatchlist } from "../controllers/watchlistController.js";
+import {
+  addToWatchlist,
+  getWatchlist,
+  updateWatchlistItem,
+  removeFromWatchlist,
+} from "../controllers/watchlistController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.use(authMiddleware);
 
+router.get("/", getWatchlist);
 router.post("/", addToWatchlist);
+router.put("/:id", updateWatchlistItem);
+router.delete("/:id", removeFromWatchlist);
 
-router.get("/", (req, res) => {
-  res.json({ httpMethod: "Get watchlist" });
-});
 export default router;
