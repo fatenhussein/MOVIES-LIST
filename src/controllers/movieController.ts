@@ -1,18 +1,40 @@
 import type { Request, Response } from "express";
 
 import { prisma } from "../config/db.ts";
-import type { IdParams } from "../validators/commonValidators.ts";
+import type {
+  IdParams,
+  PaginationQuery,
+} from "../validators/commonValidators.ts";
 import type {
   CreateMovieInput,
   UpdateMovieInput,
 } from "../validators/movieValidators.ts";
 
-export const getMovies = async (_req: Request, res: Response) => {
-  const movies = await prisma.movie.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+export const getMovies = async (req: Request, res: Response) => {
+  // safe: validateRequest(paginationSchema, "query") already ran on this
+  // route and replaced req.query with parsed numbers
+  const { page, limit } = req.query as unknown as PaginationQuery;
 
-  res.status(200).json({ data: movies });
+  // run both queries in one transaction so the page and the total agree
+  const [movies, total] = await prisma.$transaction([
+    prisma.movie.findMany({
+      // id breaks ties so rows with the same createdAt keep a stable order
+      orderBy: [{ createdAt: "desc" }, { id: "asc" }],
+      skip: (page - 1) * limit,
+      take: limit,
+    }),
+    prisma.movie.count(),
+  ]);
+
+  res.status(200).json({
+    data: movies,
+    pagination: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+  });
 };
 
 export const getMovieById = async (req: Request<IdParams>, res: Response) => {

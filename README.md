@@ -91,13 +91,22 @@ npm run build && npm start
 
 ### Movies
 
-| Method | Endpoint      | Description                   |     |
-| ------ | ------------- | ----------------------------- | --- |
-| GET    | `/movies`     | List all movies, newest first |     |
-| GET    | `/movies/:id` | Get one movie                 |     |
-| POST   | `/movies`     | Create a movie                | 🔒  |
-| PUT    | `/movies/:id` | Update a movie you created    | 🔒  |
-| DELETE | `/movies/:id` | Delete a movie you created    | 🔒  |
+| Method | Endpoint      | Description                |     |
+| ------ | ------------- | -------------------------- | --- |
+| GET    | `/movies`     | List movies, paginated     |     |
+| GET    | `/movies/:id` | Get one movie              |     |
+| POST   | `/movies`     | Create a movie             | 🔒  |
+| PUT    | `/movies/:id` | Update a movie you created | 🔒  |
+| DELETE | `/movies/:id` | Delete a movie you created | 🔒  |
+
+`GET /movies` is paginated with `?page=` (default `1`) and `?limit=` (default `10`, max `100`). Movies are sorted newest first:
+
+```json
+{
+  "data": [{ "id": "…", "title": "Parasite", "…": "…" }],
+  "pagination": { "page": 1, "limit": 10, "total": 57, "totalPages": 6 }
+}
+```
 
 ### Watchlist
 
