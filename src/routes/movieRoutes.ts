@@ -12,13 +12,16 @@ import {
   createMovieSchema,
   updateMovieSchema,
 } from "../validators/movieValidators.ts";
-import { idParamSchema } from "../validators/commonValidators.ts";
+import {
+  idParamSchema,
+  paginationSchema,
+} from "../validators/commonValidators.ts";
 
 const router = express.Router();
 
 const validateId = validateRequest(idParamSchema, "params");
 
-router.get("/", getMovies);
+router.get("/", validateRequest(paginationSchema, "query"), getMovies);
 router.get("/:id", validateId, getMovieById);
 
 router.post(

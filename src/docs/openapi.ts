@@ -1,6 +1,7 @@
 import { z, type ZodType } from "zod";
 
 import { loginSchema, registerSchema } from "../validators/authValidators.ts";
+import { paginationSchema } from "../validators/commonValidators.ts";
 import {
   createMovieSchema,
   updateMovieSchema,
@@ -42,6 +43,17 @@ const idParam = {
   in: "path",
   required: true,
   schema: { type: "string", format: "uuid" },
+};
+
+// turns each field of a zod object schema into an OpenAPI query parameter
+const queryParamsFromZod = (schema: ZodType) => {
+  const { properties = {} } = fromZod(schema);
+  return Object.entries(properties).map(([name, fieldSchema]) => ({
+    name,
+    in: "query",
+    required: false,
+    schema: fieldSchema,
+  }));
 };
 
 const errors = {
@@ -121,6 +133,15 @@ export const openApiSpec = {
           token: { type: "string" },
         },
       },
+      Pagination: {
+        type: "object",
+        properties: {
+          page: { type: "integer", example: 1 },
+          limit: { type: "integer", example: 10 },
+          total: { type: "integer", example: 57 },
+          totalPages: { type: "integer", example: 6 },
+        },
+      },
       Error: {
         type: "object",
         properties: { message: { type: "string" } },
@@ -176,12 +197,17 @@ export const openApiSpec = {
     "/movies": {
       get: {
         tags: ["Movies"],
-        summary: "List all movies",
+        summary: "List movies, one page at a time",
+        parameters: queryParamsFromZod(paginationSchema),
         responses: {
-          200: jsonResponse(
-            "Movies, newest first",
-            dataOf({ type: "array", items: ref("Movie") }),
-          ),
+          200: jsonResponse("A page of movies, newest first", {
+            type: "object",
+            properties: {
+              data: { type: "array", items: ref("Movie") },
+              pagination: ref("Pagination"),
+            },
+          }),
+          400: errors[400],
         },
       },
       post: {
