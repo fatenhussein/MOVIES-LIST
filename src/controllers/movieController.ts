@@ -15,8 +15,9 @@ export const getMovies = async (req: Request, res: Response) => {
   // route and replaced req.query with parsed numbers
   const { page, limit } = req.query as unknown as PaginationQuery;
 
-  // run both queries in one transaction so the page and the total agree
-  const [movies, total] = await prisma.$transaction([
+  // run both queries in parallel. A transaction isn't needed here and its
+  // 2s start timeout fails while a serverless database (Neon) is waking up
+  const [movies, total] = await Promise.all([
     prisma.movie.findMany({
       // id breaks ties so rows with the same createdAt keep a stable order
       orderBy: [{ createdAt: "desc" }, { id: "asc" }],
